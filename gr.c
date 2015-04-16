@@ -9,8 +9,51 @@
 #include <include/types.h>
 //#define DEBUG_T
 #define STATS
-/* ************************************************** */
-/* ************************************************** */
+
+/* ************************************************** 
+INFO:
+- Implementation of a gradient ruting protocol. 
+- A gradient is the distance of each sensor in number of hops to the sink
+- Node 0 (c->node == 0) is the sink, it initiate the creation of the gradient
+- The gradient of depth is 0 for the sink
+
+MESSAGE TYPE:
+- BUILD : gradient construction message
+    - The sink sends the build message at regular interval (with a sequence number)
+    - Contains:
+        - Source
+        - sequence number
+        - depth of the sender
+        - ...
+    - If a node receives a BUILD message, 
+        - it changes its status to NODE_ON
+        - it updates its depth (msg.depth ++) 
+            - to be done in an intelligent way
+        - Sends the message (local broadcast) 
+            - avoid broadcast strom
+- DATA : Data message
+    - For now only node 1 can send data messages 
+        - local broadcast
+            - Can be more intelligent
+        - with its id, a time stamp (compute delay), depth of the node, origin depth, sequence number...
+    - If a node receives a data message
+        - it forwards it
+            - In an intelligent way
+            - check sequence number, ... 
+    - If the sink receive the message : WE ARE DONE
+        - print some stats about the messages
+
+TODO : 
+    - building the gradient
+    - sending message to the sink
+    - statistics constructions + visualisation
+
+
+************************************************** */
+
+
+
+
 model_t model =  {
     "Gradient Routing",
     "Tahiry Razafindralambo",
@@ -106,6 +149,8 @@ double dpos(int x_1, int y_1, int x_2, int y_2);
 /* ************************************************** */
 
 double d(i,j){
+    // Compte the distance between two nodes based on their ID
+    // return the distance
     position_t *p_i, *p_j;
     double d;
     p_i = get_node_position(i);
@@ -116,6 +161,8 @@ double d(i,j){
 }
 
 double dpos(x_1,y_1,x_2,y_2){
+    // Compte the distance between two nodes based on their (x,y) position
+    // return the distance
     double d;
     
     d = sqrt(  (x_1 - x_2)*(x_1 - x_2) + (y_1 - y_2)*(y_1 - y_2)  );
@@ -125,6 +172,10 @@ double dpos(x_1,y_1,x_2,y_2){
 /* ************************************************** */
 /* ************************************************** */
 int init(call_t *c, void *params) {
+    // Initialisation of the gradient
+    // All variable that are to be common for all nodes (at the gradient level should be here)
+    // Some times are defined here and can be change in the xml files
+    // All the variables are store in the entitydata structure (define above)
     struct entitydata *entitydata = malloc(sizeof(struct entitydata));
     param_t *param;
 
@@ -168,12 +219,17 @@ int init(call_t *c, void *params) {
 }
 
 int destroy(call_t *c) {
+    // destroying the entitydata structure 
+    // can be usefull to put some statistics here (end of simulation)
     return 0;
 }
 
 /* ************************************************** */
 /* ************************************************** */
 int setnode(call_t *c, void *params) {
+    // Initialisation of the gradient at a node level
+    // create the local variable of a node
+    // All variable for each node is stored in  _node_private structure (see above)
     struct _node_private *nodedata = malloc(sizeof(struct _node_private));
     //struct entitydata *entitydata = get_entity_private_data(c);
     int i = get_entity_links_down_nbr(c);
@@ -228,6 +284,9 @@ int setnode(call_t *c, void *params) {
 }
 
 int unsetnode(call_t *c) {
+    // Function call when de-allocating the node and especially its _node_private structure
+    // This function is also called when a node dies (battery)
+    // usefull for individual statistics at the end of the simulation
     struct _node_private *nodedata = get_node_private_data(c);
     //struct entitydata *entitydata = get_entity_private_data(c); 
     // print node stat before exit here !
@@ -253,6 +312,11 @@ int unsetnode(call_t *c) {
 /* ************************************************** */
 /* ************************************************** */
 int bootstrap(call_t *c) {
+    // Bootstraping the simulation
+    // First actions perform by a node go here
+    // for example sending the first BUILD message for the sink
+    // or sending the first data message for the sensors
+    // make use of scheduler call back (use and abuse - not that much, since its slows simulation-)
     struct _node_private *nodedata = get_node_private_data(c);
     int i = get_entity_links_down_nbr(c);
     entityid_t *down = get_entity_links_down(c);
@@ -286,10 +350,12 @@ int bootstrap(call_t *c) {
 }
 
 int ioctl(call_t *c, int option, void *in, void **out) {
+    // useless for us here
     return 0;  
 }
 
 int updateposition(call_t *c){
+    // useless for us here
     return 0;
 }
 
@@ -297,6 +363,7 @@ int updateposition(call_t *c){
 /* ************************************************** */
 /* ************************************************** */
 int tx_build(call_t *c, void *args) {
+    // transmitting build message
     struct _node_private *nodedata = get_node_private_data(c);
     struct entitydata *entitydata = get_entity_private_data(c);
     call_t c0 = {get_entity_bindings_down(c)->elts[0], c->node, c->entity};
@@ -337,6 +404,7 @@ int tx_build(call_t *c, void *args) {
 }
 
 int tx_data(call_t *c, void *args) {
+    // transmitting data messages
     struct _node_private *nodedata = get_node_private_data(c);
     call_t c0 = {get_entity_bindings_down(c)->elts[0], c->node, c->entity};
     destination_t destination = {BROADCAST_ADDR, {-1, -1, -1}};
@@ -386,6 +454,7 @@ int tx_data(call_t *c, void *args) {
 }
 
 int tx_forward(call_t *c, void *args) {
+    // forwarding other nodes' messages
     struct _node_private *nodedata = get_node_private_data(c);
     nodedata->buffer_pointer -- ;
     if ( nodedata->buffer_pointer < 0 ) {
@@ -449,6 +518,7 @@ int tx_forward(call_t *c, void *args) {
 }
 
 int move(call_t *c, void *args) {
+    // useless for us here
     return 0;
 }
 
@@ -456,6 +526,9 @@ int move(call_t *c, void *args) {
 /* ************************************************** */
 
 void add_seq(call_t *c, int s) {
+    // add a sequence number of a packet in a table (table as a finite size)
+    // sequence number are globally unique
+    // for data packet
     struct _node_private *nodedata = get_node_private_data(c);
     nodedata->seq_pointer ++ ;
     if ( nodedata->seq_pointer >= SEQUENCE ) { 
@@ -465,6 +538,8 @@ void add_seq(call_t *c, int s) {
 }
 
 int check_seq(call_t *c, int s) {
+    // check if a sequence number is in the table (table as a finite size)
+    // for data packet
     struct _node_private *nodedata = get_node_private_data(c);
     int i, helper = 0;
     for ( i = 0 ; i < SEQUENCE ; i ++ ){
@@ -483,6 +558,10 @@ int check_seq(call_t *c, int s) {
 /* ************************************************** */
 /* ************************************************** */
 void rx(call_t *c, packet_t *packet) {
+    // reception of message from lower level
+    // This function is call when other layer of the protocol stack when a packet should be sent
+    // to the gradient (application layer)
+    // All received packets first "arrive in this function"
     int helper = 0;
     struct _node_private *nodedata = get_node_private_data(c);
     struct entitydata *entitydata = get_entity_private_data(c);
