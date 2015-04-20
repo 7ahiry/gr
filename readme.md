@@ -25,13 +25,13 @@
 
 
 ## NOTES
-
-1. NOTE: wsnet is already installed and running (at least I hope)
-You can check by launching: 
-```sh
-wsnet -c /usr/local/wsnet-2.0/demo/cbr.xml
-```
-2. It is better to create a github account. It will ease a lot of things. you can fork the repository [7ahiry](https://github.com/7ahiry) and clone your own repository in order to keep track of your work and in order for other to use your work later.
+  1. NOTE: wsnet is already installed and running (at least I hope). You can check by launching: 
+  
+  ```sh
+    wsnet -c /usr/local/wsnet-2.0/demo/cbr.xml
+  ```
+  
+  2. It is better to create a github account. It will ease a lot of things. you can fork the repository [7ahiry](https://github.com/7ahiry) and clone your own repository in order to keep track of your work and in order for other to use your work later.
 
 ## TODO
 NOTE : if you have forked [7ahiry](https://github.com/7ahiry) then use your own, if not, use : (https://github.com/7ahiry)
