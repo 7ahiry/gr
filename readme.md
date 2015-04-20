@@ -36,52 +36,49 @@
 ## TODO
 NOTE : if you have forked [7ahiry](https://github.com/7ahiry) then use your own, if not, use : (https://github.com/7ahiry)
 
-1. Create/clone the ${HOME}/bin. ${HOME}/bin is already in your ${PATH}
-```sh
-cd ${HOME}
-git clone https://github.com/7ahiry/bin
-```
-
-2. Clone simulation directory. It contains xml description of the simulation, and a topology configuration.
-```sh
-cd ${HOME}/sim
-git clone https://github.com/7ahiry/sim_gr
-```
-
-3. Clone basic modules and compile them. The two following modulesdo not require qny change from you. 
-```sh
-cd ${HOME}/too/wsnet-module/user_models
-git clone https://github.com/7ahiry/filestatic
-cd filestatic
-wsnet_insert_module.sh mobility filestatic
-```
-```sh
-cd ${HOME}/too/wsnet-module/user_models
-git clone https://github.com/7ahiry/myenergy
-cd myenergy
-wsnet_insert_module.sh energy myenergy
-```
-Note that the wsnet_insert_module.sh is in ${HOME}/bin
-
-4. Clone the grandient routing file skeleton, edit, complete, compile and run simulation
-```sh
-cd ${HOME}/too/wsnet-module/user_models
-git clone https://github.com/7ahiry/gr
-cd gr
-gvim gr.c
-[complete file]
-wsnet_insert_module.sh application gr 
-cd ${HOME}/sim/sim_gr
-wsnet -c gradient.xml
-```
-This files contains a working gradient routing. You need to improve it. 
-    1. Divide into 3 groups. 
-        1. Group 1 will focus on the statistics plotting.
-        2. Group 2 will focus on the reduction of duplication
-        4. Group 3 will focus on energy-aware mechanisms.
-
-
-5. Plot statistics. Use the output of your simulation to create statistics such as: delivery ratio, number of duplicate, average number of node involved in the routing process. etc... Based on the work of Group 1, comapre the results of Group 2, Group 3 and original version of gradient.  
-
-6. Follow your code with git, push your code to your repository, pull request to me. 
+  1. Create/clone the ${HOME}/bin. ${HOME}/bin is already in your ${PATH}
+  ```sh
+  cd ${HOME}
+  git clone https://github.com/7ahiry/bin
+  ```
+  
+  2. Clone simulation directory. It contains xml description of the simulation, and a topology configuration.
+  ```sh
+  cd ${HOME}/sim
+  git clone https://github.com/7ahiry/sim_gr
+  ```
+  
+  3. Clone basic modules and compile them. The two following modulesdo not require qny change from you. 
+  ```sh
+  cd ${HOME}/too/wsnet-module/user_models
+  git clone https://github.com/7ahiry/filestatic
+  cd filestatic
+  wsnet_insert_module.sh mobility filestatic
+  ```
+  ```sh
+  cd ${HOME}/too/wsnet-module/user_models
+  git clone https://github.com/7ahiry/myenergy
+  cd myenergy
+  wsnet_insert_module.sh energy myenergy
+  ```
+  Note that the wsnet_insert_module.sh is in ${HOME}/bin
+  
+  4. Clone the grandient routing file skeleton, edit, complete, compile and run simulation
+  ```sh
+  cd ${HOME}/too/wsnet-module/user_models
+  git clone https://github.com/7ahiry/gr
+  cd gr
+  gvim gr.c
+  [modify file]
+  wsnet_insert_module.sh application gr 
+  cd ${HOME}/sim/sim_gr
+  wsnet -c gradient.xml
+  ```
+  This files contains a working gradient routing. You need to improve it. 
+    1. Divide into 3 groups.
+      1. Group 1 will focus on the statistics plotting.
+      2. Group 2 will focus on the reduction of duplication
+      3. Group 3 will focus on energy-aware mechanisms.
+  5. Plot statistics. Use the output of your simulation to create statistics such as: delivery ratio, number of duplicate, average number of node involved in the routing process. etc... Based on the work of Group 1, comapre the results of Group 2, Group 3 and original version of gradient.
+  6. Follow your code with git, push your code to your repository, pull request to me. 
 
