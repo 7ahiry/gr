@@ -75,10 +75,12 @@ NOTE : if you have forked [7ahiry](https://github.com/7ahiry) then use your own,
   wsnet -c gradient.xml
   ```
   This files contains a working gradient routing. You need to improve it. 
-    1. Divide into 3 groups.
-      1. Group 1 will focus on the statistics plotting.
-      2. Group 2 will focus on the reduction of duplication
-      3. Group 3 will focus on energy-aware mechanisms.
+      1. Divide into 3 groups.
+        1. Group 1 will focus on the statistics plotting.
+        2. Group 2 will focus on the reduction of duplication
+        3. Group 3 will focus on energy-aware mechanisms.
+        
   5. Plot statistics. Use the output of your simulation to create statistics such as: delivery ratio, number of duplicate, average number of node involved in the routing process. etc... Based on the work of Group 1, comapre the results of Group 2, Group 3 and original version of gradient.
+  
   6. Follow your code with git, push your code to your repository, pull request to me. 
 
