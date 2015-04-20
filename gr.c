@@ -139,7 +139,7 @@ int tx_build(call_t *c, void *args);
 int tx_data(call_t *c, void *args);
 int tx_forward(call_t *c, void *args);
 int move(call_t *c, void *args);
-int my_enery(call_t *c, void *args);
+int my_energy(call_t *c, void *args);
 void add_seq(call_t *c, int s);
 int check_seq(call_t *c, int s);
 int updateposition(call_t *c);
@@ -523,12 +523,13 @@ int move(call_t *c, void *args) {
     return 0;
 }
 
-int my_enery(call_t *c, void *args) {
+int my_energy(call_t *c, void *args) {
+    entityid_t energy_id = get_energy_entity(c);
     if (c->node == 0){
         return 100;
     } else {
         call_t c1 = {energy_id,c->node,c->entity};
-        return IOCTL(&c1,energy,0,0);
+        return IOCTL(&c1,0,0,0);
     }
 }
 
@@ -628,6 +629,12 @@ void rx(call_t *c, packet_t *packet) {
                 add_seq(c, header->p_seqno);
                 scheduler_add_callback(get_time() + 
                     get_random_time_range(0,entitydata->Delay), c, tx_forward, NULL);
+#ifdef STATS
+                printf("[ENERGY] %lli (%i) %lli %i %i me:%i - %i\n", 
+                    get_time(), header->p_origin, 
+                    get_time()- header->p_stamp, 
+                    header->p_seqno,header->p_src,c->node,my_energy(c,0));
+#endif
             }
 
             if (fwd == 2) {
