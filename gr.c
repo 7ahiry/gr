@@ -139,6 +139,7 @@ int tx_build(call_t *c, void *args);
 int tx_data(call_t *c, void *args);
 int tx_forward(call_t *c, void *args);
 int move(call_t *c, void *args);
+int my_enery(call_t *c, void *args);
 void add_seq(call_t *c, int s);
 int check_seq(call_t *c, int s);
 int updateposition(call_t *c);
@@ -520,6 +521,15 @@ int tx_forward(call_t *c, void *args) {
 int move(call_t *c, void *args) {
     // useless for us here
     return 0;
+}
+
+int my_enery(call_t *c, void *args) {
+    if (c->node == 0){
+        return 100;
+    } else {
+        call_t c1 = {energy_id,c->node,c->entity};
+        return IOCTL(&c1,energy,0,0);
+    }
 }
 
 /* ************************************************** */
